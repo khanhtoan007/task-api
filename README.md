@@ -109,23 +109,18 @@
 
 #### Cài đặt và chạy project
 
-1. **Di chuyển vào thư mục src:**
-   ```bash
-   cd src
-   ```
-
-2. **Cài đặt dependencies:**
+1. **Cài đặt dependencies:**
    ```bash
    composer install
    npm install
    ```
 
-3. **Tạo file `.env`:**
+2. **Tạo file `.env`:**
    ```bash
    cp .env.example .env
    ```
 
-4. **Cấu hình file `.env`:**
+3. **Cấu hình file `.env`:**
    
    Mở file `.env` và cập nhật thông tin database:
    ```env
@@ -137,66 +132,43 @@
    DB_PASSWORD=your_password
    ```
 
-5. **Tạo database:**
+4. **Tạo database:**
    ```bash
    mysql -u root -p
    CREATE DATABASE laravel;
    EXIT;
    ```
 
-6. **Generate application key:**
+5. **Generate application key:**
    ```bash
    php artisan key:generate
    ```
 
-7. **Chạy migrations:**
+6. **Chạy migrations:**
    ```bash
    php artisan migrate
    ```
 
-8. **Tạo dữ liệu mẫu (tùy chọn):**
-   ```bash
-   php artisan db:seed
-   ```
-
-9. **Build frontend assets (nếu có):**
+7. **Build frontend assets (nếu có):**
    ```bash
    npm run build
    # hoặc cho development
    npm run dev
    ```
 
-10. **Chạy development server:**
+8. **Chạy development server:**
     ```bash
     php artisan serve
     ```
 
-11. **Truy cập ứng dụng:**
+9. **Truy cập ứng dụng:**
     - Web: http://localhost:8000
 
 #### Các lệnh thường dùng
 
-- **Chạy migrations:**
-  ```bash
-  php artisan migrate
-  ```
-
-- **Rollback migrations:**
-  ```bash
-  php artisan migrate:rollback
-  ```
-
-- **Xóa cache:**
-  ```bash
-  php artisan cache:clear
-  php artisan config:clear
-  php artisan route:clear
-  php artisan view:clear
-  ```
-
 - **Chạy tests:**
   ```bash
-  php artisan test
+  composer test
   ```
 
 ### Cấu trúc project
@@ -212,14 +184,31 @@
   - `docker/nginx/default.conf` - Nginx configuration
 - `docker-compose.yml` - Docker Compose configuration
 
-## About Laravel
+## Packages
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### For Prod
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+#### # [darkaonline/l5-swagger](https://github.com/DarkaOnLine/L5-Swagger)
+
+L5 Swagger - OpenApi or Swagger Specification for Laravel project made easy.
+
+### For dev:
+
+#### # [Sail](https://laravel.com/docs/10.x/sail)
+
+Laravel Sail is a light-weight command-line interface for interacting with Laravel's default Docker development
+environment.
+
+#### # [Pest](https://pestphp.com)
+
+Pest is a testing framework with a focus on simplicity,
+meticulously designed to bring back the joy of testing in PHP.
+
+#### # [Laravel Pint](https://laravel.com/docs/10.x/pint)
+
+Laravel Pint is an opinionated PHP code style fixer for minimalists.
+
+#### # [Rector](https://github.com/rectorphp/rector)
+
+Rector instantly upgrades and refactors the PHP code of your application.
+
