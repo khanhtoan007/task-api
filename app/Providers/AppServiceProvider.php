@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Contracts\QueryBuilderInterface;
+use App\Services\QueryBuilder;
 use Illuminate\Support\ServiceProvider;
 use L5Swagger\L5SwaggerServiceProvider;
 use NunoMaduro\Collision\Provider;
@@ -17,6 +19,8 @@ final class AppServiceProvider extends ServiceProvider
             $this->app->register(L5SwaggerServiceProvider::class);
         }
         (new Provider)->register();
+
+        $this->app->bind(QueryBuilderInterface::class, QueryBuilder::class);
     }
 
     /**

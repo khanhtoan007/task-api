@@ -1,29 +1,27 @@
 FROM php:8.3-fpm
 
-# Install system dependencies
+ARG HOST_UID=1000
+ARG HOST_GID=1000
+ENV HOST_USER=host-user
+
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    zip \
-    unzip \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev
+    git curl zip unzip libpng-dev libonig-dev libxml2-dev \
+  && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath \
+  && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath
+RUN groupadd -g ${HOST_GID} ${HOST_USER} \
+  && useradd -u ${HOST_UID} -g ${HOST_GID} -m -s /bin/bash ${HOST_USER}
 
-# Install Composer
+# Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Copy entrypoint script
-COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Copy PHP-FPM pool configuration
-COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 WORKDIR /var/www/html
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+RUN sed -i "s/^user = .*/user = ${HOST_USER}/" /usr/local/etc/php-fpm.d/www.conf \
+ && sed -i "s/^group = .*/group = ${HOST_USER}/" /usr/local/etc/php-fpm.d/www.conf \
+ && sed -i "s/^;?listen.owner = .*/listen.owner = ${HOST_USER}/" /usr/local/etc/php-fpm.d/www.conf \
+ && sed -i "s/^;?listen.group = .*/listen.group = ${HOST_USER}/" /usr/local/etc/php-fpm.d/www.conf
+
+USER ${HOST_USER}
+
 CMD ["php-fpm"]
