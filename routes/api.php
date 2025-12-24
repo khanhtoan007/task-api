@@ -1,15 +1,15 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Task\TaskController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/hello', function () {
-    return "Hello World";
+    return 'Hello World';
 });
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function (): void {
     // Route::get('/user', [UserController::class, 'getUser']);
 
     Route::get('/user', function (Request $request) {
@@ -19,7 +19,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::apiResource('tasks', TaskController::class)->only(['index', 'store']);
 
-Route::prefix('auth')->group(function () {
+Route::prefix('auth')->group(function (): void {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/register', [AuthController::class, 'register']);

@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Enums\TaskStatusEnum;
+use Illuminate\Foundation\Http\FormRequest;
 
-class TaskRequest extends FormRequest
+final class TaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class TaskRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:255',
-            'status' => 'required|in:' . implode(',', TaskStatusEnum::cases()),
+            'status' => 'required|in:'.implode(',', TaskStatusEnum::cases()),
         ];
     }
 

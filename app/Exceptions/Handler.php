@@ -2,16 +2,16 @@
 
 namespace App\Exceptions;
 
-use Dotenv\Exception\ValidationException;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-use function response;
-
 final class Handler extends ExceptionHandler
 {
+    use ApiResponseTrait;
+
     /**
      * Render an exception into an HTTP response.
      */
@@ -24,20 +24,21 @@ final class Handler extends ExceptionHandler
             }
         }
 
-        if ($e instanceof ModelNotFoundException) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Resource not found.',
-                'data' => null,
-            ], 404);
+        if ($e instanceof ApiException) {
+            return $e->render($request);
         }
 
-        if ($e instanceof ValidationException) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $e->errors(), // chi tiết từng field lỗi
-            ], 422);
+        if ($e instanceof BusinessException) {
+            return $e->render($request);
+        }
+
+        if ($e instanceof AuthException) {
+            return $e->render($request);
+        }
+
+        // Nếu không tạo file exception để custom thì có thể viết nhanh như này - dùng chung format response từ ApiResponseTrait
+        if ($e instanceof ModelNotFoundException) {
+            return $this->errorResponse('Resource not found.', 404);
         }
 
         return parent::render($request, $e);

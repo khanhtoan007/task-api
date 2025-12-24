@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Exceptions\ApiException;
+use App\Exceptions\AuthException;
 use App\Models\RefreshToken;
 use App\Models\User;
 use Carbon\Carbon;
@@ -16,7 +17,7 @@ final class AuthService
     {
         $user = User::where('email', $email)->first();
         if (! $user || ! Hash::check($password, $user->password)) {
-            throw new ApiException('Invalid credentials', 400);
+            throw new AuthException('Invalid credentials', 401);
         }
         $access_token = JWTAuth::fromUser($user);
         $refresh_token = $this->createRefreshToken($user);

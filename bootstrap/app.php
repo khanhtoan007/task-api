@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Ensure render callback signature matches Laravel expectation: (Throwable $e, Request $request)
-        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+        $exceptions->render(function (Throwable $e, Illuminate\Http\Request $request) {
             if (method_exists($e, 'render')) {
                 return call_user_func([$e, 'render'], $request);
             }
@@ -24,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             return null;
         });
 
-        $exceptions->shouldRenderJsonWhen(function (\Illuminate\Http\Request $request, \Throwable $e) {
+        $exceptions->shouldRenderJsonWhen(function (Illuminate\Http\Request $request, Throwable $e) {
             return $request->is('api/*') || $request->expectsJson();
         });
     })->create();

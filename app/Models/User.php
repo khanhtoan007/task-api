@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-//use Laravel\Sanctum\HasApiTokens;
+// use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
@@ -23,9 +23,10 @@ final class User extends Authenticatable implements JWTSubject
 {
     //    use HasApiTokens;
     use HasFactory, HasUuids, Notifiable;
-    protected $keyType = 'string';
+
     public $incrementing = false;
 
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -47,6 +48,16 @@ final class User extends Authenticatable implements JWTSubject
         'password',
     ];
 
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -58,15 +69,5 @@ final class User extends Authenticatable implements JWTSubject
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    public function getJWTCustomClaims()
-    {
-        return [];
     }
 }

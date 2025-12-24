@@ -8,12 +8,12 @@ use App\Http\Resources\TaskResource;
 use App\Services\Task\TaskService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * @OA\Get(
  *   path="/api/tasks",
  *   summary="List tasks",
+ *
  *   @OA\Response(response=200, description="OK")
  * )
  */
@@ -23,8 +23,7 @@ final class TaskController
 
     public function __construct(
         private readonly TaskService $taskService
-    ) {
-    }
+    ) {}
 
     /**
      * Get paginated list of tasks with filters and sorting

@@ -4,8 +4,8 @@ namespace App\Traits;
 
 use Illuminate\Http\JsonResponse;
 
-trait ApiResponseTrait {
-    
+trait ApiResponseTrait
+{
     protected function successResponse($data = null, string $message = 'Success', int $code = 200): JsonResponse
     {
         return response()->json([
@@ -20,6 +20,7 @@ trait ApiResponseTrait {
         $response = [
             'success' => false,
             'message' => $message,
+            'errors' => $errors,
         ];
 
         if ($errors !== null) {
@@ -28,5 +29,4 @@ trait ApiResponseTrait {
 
         return response()->json($response, $code);
     }
-    
 }

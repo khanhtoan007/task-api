@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RefreshToken extends Model
+final class RefreshToken extends Model
 {
     protected $fillable = [
         'user_id',
@@ -18,6 +18,7 @@ class RefreshToken extends Model
         'expires_at' => 'datetime',
         'revoked' => 'boolean',
     ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

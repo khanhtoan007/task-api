@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Exceptions;
+
+use Exception;
+use App\Traits\ApiResponseTrait;
+use Illuminate\Http\JsonResponse;
+
+class AuthException extends Exception
+{
+    use ApiResponseTrait;
+
+    public function __construct(string $message, int $code = 401)
+    {
+        parent::__construct($message, $code);
+    }
+
+    public function render($request): JsonResponse
+    {
+        return $this->errorResponse("Authenticate Exception: Unauthorized", $this->getCode(), $this->getMessage());
+    }
+}

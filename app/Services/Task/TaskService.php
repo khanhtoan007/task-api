@@ -15,15 +15,14 @@ final class TaskService
 {
     use ResponseListQuery;
 
-    public function __construct(
-        private readonly QueryBuilderInterface $queryBuilder
-    ) {
-    }
-
     /**
      * Fields to search in
      */
     protected array $searchFields = ['title', 'description'];
+
+    public function __construct(
+        private readonly QueryBuilderInterface $queryBuilder
+    ) {}
 
     /**
      * Get paginated tasks with filters and sorting
@@ -40,18 +39,6 @@ final class TaskService
     }
 
     /**
-     * Apply custom filters (status, etc.)
-     */
-    private function applyCustomFilters(Builder $query, array $filters): Builder
-    {
-        if (isset($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
-
-        return $query;
-    }
-
-    /**
      * Create a new task
      */
     public function createTask(array $data): Task
@@ -65,5 +52,17 @@ final class TaskService
     public function getTaskById(string $id): ?Task
     {
         return Task::find($id);
+    }
+
+    /**
+     * Apply custom filters (status, etc.)
+     */
+    private function applyCustomFilters(Builder $query, array $filters): Builder
+    {
+        if (isset($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        return $query;
     }
 }
