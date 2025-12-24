@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+//use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @property uuid $id
@@ -18,10 +19,13 @@ use Laravel\Sanctum\HasApiTokens;
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  */
-final class User extends Authenticatable
+final class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens;
+    //    use HasApiTokens;
     use HasFactory, HasUuids, Notifiable;
+    protected $keyType = 'string';
+    public $incrementing = false;
+
 
     /**
      * The attributes that are mass assignable.
@@ -41,7 +45,6 @@ final class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -55,5 +58,15 @@ final class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
