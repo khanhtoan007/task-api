@@ -26,7 +26,6 @@ final readonly class AuthController
     public function login(LoginRequest $request): JsonResponse
     {
         $data = $this->authService->login($request->email, $request->password);
-
         return $this->successResponse(
             data: $data,
             message: 'Login successful'

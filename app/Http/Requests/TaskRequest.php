@@ -27,6 +27,8 @@ final class TaskRequest extends FormRequest
             'description' => 'required|string|max:255',
             'status' => 'required|in:'.implode(',', TaskStatusEnum::cases()),
             'assigned_to' => 'required|uuid|exists:users,id',
+            'parent_id' => 'nullable|uuid|exists:tasks,id',
+            'project_id' => 'required|uuid|exists:projects,id',
         ];
     }
 
@@ -39,6 +41,7 @@ final class TaskRequest extends FormRequest
             'assigned_to.required' => 'User assign to is required',
             'assigned_to.uuid' => 'User assign to is not a valid UUID',
             'assigned_to.exists' => 'User assign to is not found',
+            'project_id.required' => 'Project is required',
         ];
     }
 }
