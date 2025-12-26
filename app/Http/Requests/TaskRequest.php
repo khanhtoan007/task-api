@@ -12,7 +12,7 @@ final class TaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,6 +26,7 @@ final class TaskRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:255',
             'status' => 'required|in:'.implode(',', TaskStatusEnum::cases()),
+            'assigned_to' => 'required|uuid|exists:users,id',
         ];
     }
 
@@ -35,6 +36,9 @@ final class TaskRequest extends FormRequest
             'title.required' => 'Title is required',
             'description.required' => 'Description is required',
             'status.required' => 'Status is required',
+            'assigned_to.required' => 'User assign to is required',
+            'assigned_to.uuid' => 'User assign to is not a valid UUID',
+            'assigned_to.exists' => 'User assign to is not found',
         ];
     }
 }

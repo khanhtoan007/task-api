@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('title');
             $table->string('description');
             $table->string('status');
-            $table->uuid('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreignUuid('created_by')->references('id')->on('users');
+            $table->foreignUuid('assigned_to')->references('id')->on('users');
+            $table->foreignUuid('project_id')->references('id')->on('projects')->cascadeOnDelete();
+            $table->foreignUuid('parent_id')->references('id')->on('tasks')->cascadeOnDelete();
             $table->timestamps();
         });
     }
