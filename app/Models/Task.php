@@ -38,7 +38,10 @@ final class Task extends Model
         'updated_at' => 'datetime',
         'status' => TaskStatusEnum::class,
     ];
-
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

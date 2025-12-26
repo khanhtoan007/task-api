@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Http\Enums\TaskStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 final class TaskRequest extends FormRequest
 {
@@ -25,7 +26,7 @@ final class TaskRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:255',
-            'status' => 'required|in:'.implode(',', TaskStatusEnum::cases()),
+            'status' => ['required', new Enum(TaskStatusEnum::class)],
             'assigned_to' => 'required|uuid|exists:users,id',
             'parent_id' => 'nullable|uuid|exists:tasks,id',
             'project_id' => 'required|uuid|exists:projects,id',

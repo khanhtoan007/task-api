@@ -18,8 +18,6 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
     });
 });
 
-Route::apiResource('tasks', TaskController::class)->only(['index', 'store']);
-
 Route::prefix('auth')->group(function (): void {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
@@ -29,7 +27,8 @@ Route::prefix('auth')->group(function (): void {
         Route::get('me', [AuthController::class, 'me']);
     });
 });
+Route::apiResource('projects', ProjectController::class);
 
-//Route::middleware('auth:api')->group(function () {
-    Route::apiResource('projects', ProjectController::class);
-//});
+Route::middleware('auth:api')->group(function () {
+    Route::apiResource('tasks', TaskController::class);
+});

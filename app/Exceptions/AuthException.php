@@ -2,11 +2,11 @@
 
 namespace App\Exceptions;
 
-use Exception;
 use App\Traits\ApiResponseTrait;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
-class AuthException extends Exception
+final class AuthException extends Exception
 {
     use ApiResponseTrait;
 
@@ -17,6 +17,6 @@ class AuthException extends Exception
 
     public function render($request): JsonResponse
     {
-        return $this->errorResponse("Authenticate Exception: Unauthorized", $this->getCode(), $this->getMessage());
+        return $this->errorResponse('Authenticate Exception: Unauthorized', $this->getCode(), $this->getMessage());
     }
 }

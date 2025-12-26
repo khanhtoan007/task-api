@@ -12,10 +12,13 @@ final class ProjectService
     {
         return Project::query()->get()->toArray();
     }
+
     public function getProject(string $projectId): array
     {
-        return Project::query()->findOrFail($projectId)->toArray();
+        //        return Project::query()->with('tasks')->findOrFail($projectId)->toArray();
+        return Project::query()->with('allTasks')->findOrFail($projectId)->toArray();
     }
+
     public function createProject(ProjectRequest $projectRequest): Project
     {
 
@@ -27,9 +30,11 @@ final class ProjectService
             'status' => ProjectStatusEnum::DRAFT,
         ]);
     }
+
     public function updateProject(string $id, ProjectRequest $projectRequest): bool
     {
         $project = Project::query()->findOrFail($id);
+
         return $project->update($projectRequest->toArray());
     }
 }

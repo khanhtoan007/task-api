@@ -9,7 +9,6 @@ use App\Services\TaskService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 
-
 final class TaskController
 {
     use ApiResponseTrait;
@@ -32,7 +31,6 @@ final class TaskController
     public function index(TaskIndexRequest $request): JsonResponse
     {
         $tasks = $this->taskService->getAllTasks($request);
-
         return $this->successResponse(
             data: [
                 'tasks' => TaskResource::collection($tasks->items()),
@@ -58,7 +56,7 @@ final class TaskController
      *   @OA\Response(response=200, description="OK")
      * )
      */
-    public function create(TaskRequest $request): JsonResponse
+    public function store(TaskRequest $request): JsonResponse
     {
         $validated = $request->validated();
         $task = $this->taskService->createTask($validated);
@@ -67,6 +65,22 @@ final class TaskController
             data: new TaskResource($task),
             message: 'Task created successfully',
             code: 201
+        );
+    }
+
+    public function show(string $id): JsonResponse
+    {
+        return $this->successResponse(
+            data : $this->taskService->getTaskById($id),
+            message: 'Task retrieved successfully',
+        );
+    }
+    public function update(string $id, TaskRequest $taskRequest): JsonResponse
+    {
+        return $this->successResponse(
+            data: $this->taskService->updateTask($id, $taskRequest->array()),
+            message: 'Task updated successfully',
+            code: 204
         );
     }
 }

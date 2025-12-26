@@ -31,7 +31,7 @@ final class TaskService
     {
         return $this->paginateWithQueryBuilder(
             queryBuilder: $this->queryBuilder,
-            query: Task::where('user_id', '019b4a3d-f605-73d4-bea4-a617a9b4f330'),
+            query: Task::query(),
             request: $request,
             searchFields: $this->searchFields,
             customFilterCallback: fn (Builder $q, array $f) => $this->applyCustomFilters($q, $f)
@@ -43,7 +43,8 @@ final class TaskService
      */
     public function createTask(array $data): Task
     {
-        return Task::create($data);
+        $data['created_by'] = auth()->user()->id;
+        return Task::query()->create($data);
     }
 
     /**
@@ -51,7 +52,7 @@ final class TaskService
      */
     public function getTaskById(string $id): ?Task
     {
-        return Task::find($id);
+        return Task::query()->with(['createdBy', 'assignedTo', 'project', 'subTasks'])->findOrFail($id);
     }
 
     /**
@@ -64,5 +65,10 @@ final class TaskService
         }
 
         return $query;
+    }
+    public function updateTask(string $id, array $data): bool
+    {
+        $task = Task::query()->findOrFail($id);
+        return $task->update($data);
     }
 }

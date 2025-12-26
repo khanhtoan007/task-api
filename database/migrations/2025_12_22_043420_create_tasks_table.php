@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignUuid('created_by')->references('id')->on('users');
             $table->foreignUuid('assigned_to')->references('id')->on('users');
             $table->foreignUuid('project_id')->references('id')->on('projects')->cascadeOnDelete();
-            $table->foreignUuid('parent_id')->references('id')->on('tasks')->cascadeOnDelete();
+            $table->foreignUuid('parent_id')->nullable()->references('id')->on('tasks')->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -43,7 +43,8 @@ final readonly class ProjectController
     {
         return $this->successResponse(
             data: $this->projectService->createProject($projectRequest),
-            message: 'Project created successfully'
+            message: 'Project created successfully',
+            code: 201
         );
     }
 
