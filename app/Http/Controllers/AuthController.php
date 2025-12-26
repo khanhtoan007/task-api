@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RefreshTokenRequest;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Services\Auth\AuthService;
+use App\Services\AuthService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +16,13 @@ final readonly class AuthController
 
     public function __construct(private AuthService $authService) {}
 
+    /**
+     * @OA\Post(
+     *   path="/api/auth/login",
+     *   tags={"Auth"},
+     *   @OA\Response(response=200, description="OK")
+     * )
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         $data = $this->authService->login($request->email, $request->password);
@@ -26,6 +33,13 @@ final readonly class AuthController
         );
     }
 
+    /**
+     * @OA\Post(
+     *   path="/api/auth/register",
+     *   tags={"Auth"},
+     *   @OA\Response(response=200, description="OK")
+     * )
+     */
     public function register(RegisterRequest $request): JsonResponse
     {
         $data = $this->authService->register(
@@ -40,6 +54,13 @@ final readonly class AuthController
         );
     }
 
+    /**
+     * @OA\Get(
+     *   path="/api/auth/me",
+     *   tags={"Auth"},
+     *   @OA\Response(response=200, description="OK")
+     * )
+     */
     public function me(Request $request): JsonResponse
     {
         return $this->successResponse(
@@ -48,6 +69,13 @@ final readonly class AuthController
         );
     }
 
+    /**
+     * @OA\Post(
+     *   path="/api/auth/refresh",
+     *   tags={"Auth"},
+     *    @OA\Response(response=200, description="OK")
+     * )
+     */
     public function refresh(RefreshTokenRequest $request): JsonResponse
     {
         $data = $this->authService->refresh($request->refresh_token);
@@ -58,6 +86,13 @@ final readonly class AuthController
         );
     }
 
+    /**
+     * @OA\Post(
+     *   path="/api/auth/logout",
+     *   tags={"Auth"},
+     *    @OA\Response(response=200, description="OK")
+     * )
+     */
     public function logout(Request $request): JsonResponse
     {
         $this->authService->logout($request->refresh_token);

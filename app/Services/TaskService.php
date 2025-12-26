@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Task;
+namespace App\Services;
 
 use App\Contracts\QueryBuilderInterface;
 use App\Http\Requests\BaseIndexRequest;

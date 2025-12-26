@@ -1,22 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Task;
+namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskIndexRequest;
 use App\Http\Requests\TaskRequest;
 use App\Http\Resources\TaskResource;
-use App\Services\Task\TaskService;
+use App\Services\TaskService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 
-/**
- * @OA\Get(
- *   path="/api/tasks",
- *   summary="List tasks",
- *
- *   @OA\Response(response=200, description="OK")
- * )
- */
+
 final class TaskController
 {
     use ApiResponseTrait;
@@ -27,6 +20,14 @@ final class TaskController
 
     /**
      * Get paginated list of tasks with filters and sorting
+     */
+    /**
+     * @OA\Get(
+     *   path="/api/tasks",
+     *   summary="List tasks",
+     *
+     *   @OA\Response(response=200, description="OK")
+     * )
      */
     public function index(TaskIndexRequest $request): JsonResponse
     {
@@ -48,6 +49,14 @@ final class TaskController
 
     /**
      * Create a new task
+     */
+    /**
+     * @OA\Post(
+     *   path="/api/tasks",
+     *   summary="Create a task",
+     *
+     *   @OA\Response(response=200, description="OK")
+     * )
      */
     public function create(TaskRequest $request): JsonResponse
     {
