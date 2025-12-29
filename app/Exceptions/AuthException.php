@@ -6,17 +6,17 @@ use App\Traits\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-final class BusinessException extends Exception
+final class AuthException extends Exception
 {
     use ApiResponseTrait;
 
-    public function __construct(string $message, int $code = 422)
+    public function __construct(string $message, int $code = 401)
     {
         parent::__construct($message, $code);
     }
 
     public function render($request): JsonResponse
     {
-        return $this->errorResponse('Violate business rules', $this->getCode());
+        return $this->errorResponse('Authenticate Exception: Unauthorized', $this->getCode(), $this->getMessage());
     }
 }

@@ -14,12 +14,9 @@ trait ResponseListQuery
     /**
      * Build paginated query with filters, search, sorting
      *
-     * @param QueryBuilderInterface $queryBuilder
-     * @param Builder|callable(): Builder $query
-     * @param BaseIndexRequest $request
-     * @param array<string> $searchFields
-     * @param callable(Builder, array): Builder|null $customFilterCallback
-     * @return LengthAwarePaginator
+     * @param  Builder|callable(): Builder  $query
+     * @param  array<string>  $searchFields
+     * @param  callable(Builder, array): Builder|null  $customFilterCallback
      */
     protected function paginateWithQueryBuilder(
         QueryBuilderInterface $queryBuilder,
@@ -40,4 +37,3 @@ trait ResponseListQuery
         );
     }
 }
-

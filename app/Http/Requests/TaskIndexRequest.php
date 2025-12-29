@@ -7,7 +7,6 @@ namespace App\Http\Requests;
 final class TaskIndexRequest extends BaseIndexRequest
 {
     /**
-     *
      * @return array<string>
      */
     protected function getAllowedSortFields(): array
@@ -16,7 +15,6 @@ final class TaskIndexRequest extends BaseIndexRequest
     }
 
     /**
-     *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     protected function getCustomRules(): array
@@ -40,4 +38,3 @@ final class TaskIndexRequest extends BaseIndexRequest
         return $filters;
     }
 }
-

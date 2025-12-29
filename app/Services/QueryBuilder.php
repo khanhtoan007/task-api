@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Contracts\QueryBuilderInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use InvalidArgumentException;
 
 final class QueryBuilder implements QueryBuilderInterface
 {
@@ -17,7 +18,7 @@ final class QueryBuilder implements QueryBuilderInterface
             return $query;
         }
 
-        return $query->where(function ($q) use ($search, $searchFields) {
+        return $query->where(function ($q) use ($search, $searchFields): void {
             foreach ($searchFields as $index => $field) {
                 if ($index === 0) {
                     $q->where($field, 'like', "%{$search}%");
@@ -34,7 +35,7 @@ final class QueryBuilder implements QueryBuilderInterface
     public function applyFilters(Builder $query, array $filters, ?callable $customFilterCallback = null): Builder
     {
         // Apply search if provided
-        if (isset($filters['search']) && !empty($filters['search'])) {
+        if (isset($filters['search']) && ! empty($filters['search'])) {
             $searchFields = $filters['search_fields'] ?? [];
             $query = $this->applySearch($query, $filters['search'], $searchFields);
         }
@@ -81,8 +82,8 @@ final class QueryBuilder implements QueryBuilderInterface
             $query = $query();
         }
 
-        if (!($query instanceof Builder)) {
-            throw new \InvalidArgumentException('Query must be an instance of Builder or a callable that returns Builder');
+        if (! ($query instanceof Builder)) {
+            throw new InvalidArgumentException('Query must be an instance of Builder or a callable that returns Builder');
         }
 
         // Add search_fields to filters for applyFilters method
@@ -94,4 +95,3 @@ final class QueryBuilder implements QueryBuilderInterface
         return $this->applyPagination($query, $perPage, $page);
     }
 }
-

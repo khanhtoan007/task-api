@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Task;
+namespace App\Services;
 
 use App\Contracts\QueryBuilderInterface;
 use App\Http\Requests\BaseIndexRequest;
@@ -15,15 +15,14 @@ final class TaskService
 {
     use ResponseListQuery;
 
-    public function __construct(
-        private readonly QueryBuilderInterface $queryBuilder
-    ) {
-    }
-
     /**
      * Fields to search in
      */
     protected array $searchFields = ['title', 'description'];
+
+    public function __construct(
+        private readonly QueryBuilderInterface $queryBuilder
+    ) {}
 
     /**
      * Get paginated tasks with filters and sorting
@@ -32,11 +31,28 @@ final class TaskService
     {
         return $this->paginateWithQueryBuilder(
             queryBuilder: $this->queryBuilder,
-            query: Task::where('user_id', '019b4a3d-f605-73d4-bea4-a617a9b4f330'),
+            query: Task::query(),
             request: $request,
             searchFields: $this->searchFields,
             customFilterCallback: fn (Builder $q, array $f) => $this->applyCustomFilters($q, $f)
         );
+    }
+
+    /**
+     * Create a new task
+     */
+    public function createTask(array $data): Task
+    {
+        $data['created_by'] = auth()->user()->id;
+        return Task::query()->create($data);
+    }
+
+    /**
+     * Get task by ID
+     */
+    public function getTaskById(string $id): ?Task
+    {
+        return Task::query()->with(['createdBy', 'assignedTo', 'project', 'subTasks'])->findOrFail($id);
     }
 
     /**
@@ -50,20 +66,9 @@ final class TaskService
 
         return $query;
     }
-
-    /**
-     * Create a new task
-     */
-    public function createTask(array $data): Task
+    public function updateTask(string $id, array $data): bool
     {
-        return Task::create($data);
-    }
-
-    /**
-     * Get task by ID
-     */
-    public function getTaskById(string $id): ?Task
-    {
-        return Task::find($id);
+        $task = Task::query()->findOrFail($id);
+        return $task->update($data);
     }
 }
