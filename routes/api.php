@@ -27,8 +27,8 @@ Route::prefix('auth')->group(function (): void {
         Route::get('me', [AuthController::class, 'me']);
     });
 });
-Route::apiResource('projects', ProjectController::class);
 
 Route::middleware('auth:api')->group(function () {
+    Route::apiResource('projects', ProjectController::class);
     Route::apiResource('tasks', TaskController::class);
 });

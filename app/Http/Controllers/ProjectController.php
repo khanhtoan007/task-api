@@ -23,10 +23,8 @@ final readonly class ProjectController
      */
     public function index(): JsonResponse
     {
-        $data = $this->projectService->getProjects();
-
         return $this->successResponse(
-            data: $data,
+            data: $this->projectService->getProjectsByUser(),
             message: 'Projects fetched successfully'
         );
     }
