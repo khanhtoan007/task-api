@@ -16,8 +16,7 @@ final class ProjectService
 
     public function getProject(string $projectId): array
     {
-        //        return Project::query()->with('tasks')->findOrFail($projectId)->toArray();
-        return Project::query()->with('subTasks')->findOrFail($projectId)->toArray();
+        return Project::query()->with('tasks')->findOrFail($projectId)->toArray();
     }
 
     public function createProject(ProjectRequest $projectRequest): Project
