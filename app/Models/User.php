@@ -71,12 +71,19 @@ final class User extends Authenticatable implements JWTSubject
             'updated_at' => 'datetime',
         ];
     }
+    
     public function createdTasks(): HasMany
     {
         return $this->hasMany(Task::class, 'created_by');
     }
+
     public function assignedTasks(): HasMany
     {
         return $this->hasMany(Task::class, 'assigned_to');
+    }
+
+    public function createdProjects(): HasMany
+    {
+        return $this->hasMany(Project::class, 'created_by');
     }
 }

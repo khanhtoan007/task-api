@@ -20,9 +20,8 @@ final class TaskFactory extends Factory
     {
         return [
             'title' => fake()->sentence(),
-            'description' => fake()->paragraph(),
+            'description' => fake()->sentence(),
             'status' => fake()->randomElement(TaskStatusEnum::cases()),
-            'user_id' => User::factory(),
         ];
     }
 }
