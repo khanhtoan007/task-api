@@ -20,12 +20,14 @@ final readonly class AuthController
      * @OA\Post(
      *   path="/api/auth/login",
      *   tags={"Auth"},
+     *
      *   @OA\Response(response=200, description="OK")
      * )
      */
     public function login(LoginRequest $request): JsonResponse
     {
         $data = $this->authService->login($request->email, $request->password);
+
         return $this->successResponse(
             data: $data,
             message: 'Login successful'
@@ -36,6 +38,7 @@ final readonly class AuthController
      * @OA\Post(
      *   path="/api/auth/register",
      *   tags={"Auth"},
+     *
      *   @OA\Response(response=200, description="OK")
      * )
      */
@@ -57,6 +60,7 @@ final readonly class AuthController
      * @OA\Get(
      *   path="/api/auth/me",
      *   tags={"Auth"},
+     *
      *   @OA\Response(response=200, description="OK")
      * )
      */
@@ -72,6 +76,7 @@ final readonly class AuthController
      * @OA\Post(
      *   path="/api/auth/refresh",
      *   tags={"Auth"},
+     *
      *    @OA\Response(response=200, description="OK")
      * )
      */
@@ -89,6 +94,7 @@ final readonly class AuthController
      * @OA\Post(
      *   path="/api/auth/logout",
      *   tags={"Auth"},
+     *
      *    @OA\Response(response=200, description="OK")
      * )
      */

@@ -31,6 +31,7 @@ final class TaskController
     public function index(TaskIndexRequest $request): JsonResponse
     {
         $tasks = $this->taskService->getAllTasks($request);
+
         return $this->successResponse(
             data: [
                 'tasks' => TaskResource::collection($tasks->items()),
@@ -75,6 +76,7 @@ final class TaskController
             message: 'Task retrieved successfully',
         );
     }
+
     public function update(string $id, TaskRequest $taskRequest): JsonResponse
     {
         return $this->successResponse(

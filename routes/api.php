@@ -23,12 +23,13 @@ Route::prefix('auth')->group(function (): void {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('register', [AuthController::class, 'register']);
     Route::post('refresh', [AuthController::class, 'refresh']);
-    Route::middleware(['auth:api'])->group(function () {
+    Route::middleware(['auth:api'])->group(function (): void {
         Route::get('me', [AuthController::class, 'me']);
     });
 });
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('auth:api')->group(function (): void {
     Route::apiResource('projects', ProjectController::class);
+    Route::post('projects/{id}/assign-user', [ProjectController::class, 'assignUser']);
     Route::apiResource('tasks', TaskController::class);
 });
