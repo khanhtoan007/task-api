@@ -27,11 +27,11 @@ final class TaskService
     /**
      * Get paginated tasks with filters and sorting
      */
-    public function getAllTasks(BaseIndexRequest $request): LengthAwarePaginator
+    public function getAllTasks(BaseIndexRequest $request, Builder $query): LengthAwarePaginator
     {
         return $this->paginateWithQueryBuilder(
             queryBuilder: $this->queryBuilder,
-            query: Task::query(),
+            query: $query,
             request: $request,
             searchFields: $this->searchFields,
             customFilterCallback: fn (Builder $q, array $f) => $this->applyCustomFilters($q, $f)
@@ -43,16 +43,16 @@ final class TaskService
      */
     public function createTask(array $data): Task
     {
-        $data['created_by'] = auth()->user()->id;
+        $data['created_by'] = auth()->id();
         return Task::query()->create($data);
     }
 
     /**
      * Get task by ID
      */
-    public function getTaskById(string $id): ?Task
+    public function show(Task $task): ?Task
     {
-        return Task::query()->with(['createdBy', 'assignedTo', 'project', 'subTasks'])->findOrFail($id);
+        return $task->load(['createdBy', 'assignedTo', 'project', 'subTasks']);
     }
 
     /**
@@ -66,9 +66,8 @@ final class TaskService
 
         return $query;
     }
-    public function updateTask(string $id, array $data): bool
+    public function updateTask(Task $task, array $data): bool
     {
-        $task = Task::query()->findOrFail($id);
         return $task->update($data);
     }
 }

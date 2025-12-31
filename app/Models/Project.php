@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property string $description
  * @property string $created_by
+ * @property User $created_by_user
  * @property string $status
  * @property Carbon $start_date
  * @property Carbon $end_date
@@ -32,6 +33,7 @@ final class Project extends Model
         'end_date',
         'created_by',
     ];
+
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',

@@ -5,17 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskIndexRequest;
 use App\Http\Requests\TaskRequest;
 use App\Http\Resources\TaskResource;
+use App\Models\Task;
 use App\Services\TaskService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 
-final class TaskController
+final class TaskController extends BaseController
 {
     use ApiResponseTrait;
 
-    public function __construct(
-        private readonly TaskService $taskService
-    ) {}
+    public function __construct(private readonly TaskService $taskService)
+    {
+        $this->authorizeResource(Task::class, 'task');
+    }
 
     /**
      * Get paginated list of tasks with filters and sorting
@@ -30,7 +32,8 @@ final class TaskController
      */
     public function index(TaskIndexRequest $request): JsonResponse
     {
-        $tasks = $this->taskService->getAllTasks($request);
+        $tasks = $this->taskService->getAllTasks($request, Task::query()->visibleTo(auth()->user()));
+
         return $this->successResponse(
             data: [
                 'tasks' => TaskResource::collection($tasks->items()),
@@ -68,19 +71,20 @@ final class TaskController
         );
     }
 
-    public function show(string $id): JsonResponse
+    public function show(Task $task): JsonResponse
     {
         return $this->successResponse(
-            data : $this->taskService->getTaskById($id),
+            data : $this->taskService->show($task),
             message: 'Task retrieved successfully',
         );
     }
-    public function update(string $id, TaskRequest $taskRequest): JsonResponse
+
+    public function update(Task $task, TaskRequest $request): JsonResponse
     {
         return $this->successResponse(
-            data: $this->taskService->updateTask($id, $taskRequest->array()),
+            data: $this->taskService->updateTask($task, $request->validated()),
             message: 'Task updated successfully',
-            code: 204
+            code: 200
         );
     }
 }

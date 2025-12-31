@@ -20,15 +20,26 @@ final class DatabaseSeeder extends Seeder
     {
         $admin = User::query()->create([
             'name' => 'Admin',
-            'email' => 'admin@admin.com',
+            'email' => 'admin@gmail.com',
             'password' => Hash::make('123123123'),
         ]);
-
         $admin->assignRole('admin');
+        $manager = User::query()->create([
+            'name' => 'Manager',
+            'email' => 'manager@gmail.com',
+            'password' => Hash::make('123123123'),
+        ]);
+        $manager->assignRole('manager');
         $managers = User::factory(3)->create();
         foreach ($managers as $manager) {
             $manager->assignRole('manager');
         }
+        $member = User::query()->create([
+            'name' => 'member',
+            'email' => 'member@gmail.com',
+            'password' => Hash::make('123123123'),
+        ]);
+        $manager->assignRole('member');
         $members = User::factory(7)->create();
         foreach ($members as $member) {
             $member->assignRole('member');
