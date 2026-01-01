@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
@@ -22,11 +21,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  */
 final class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, HasRoles, HasUuids, Notifiable;
+    use HasFactory, HasUuids, Notifiable;
 
     public $incrementing = false;
-
-    protected $guard_name = 'api';
 
     protected $keyType = 'string';
 
@@ -60,21 +57,6 @@ final class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function createdTasks(): HasMany
-    {
-        return $this->hasMany(Task::class, 'created_by');
-    }
-
-    public function assignedTasks(): HasMany
-    {
-        return $this->hasMany(Task::class, 'assigned_to');
-    }
-
-    public function createdProjects(): HasMany
-    {
-        return $this->hasMany(Project::class, 'created_by');
-    }
-
     /**
      * Get the attributes that should be cast.
      *
@@ -88,5 +70,20 @@ final class User extends Authenticatable implements JWTSubject
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
+    }
+    
+    public function createdTasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'created_by');
+    }
+
+    public function assignedTasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'assigned_to');
+    }
+
+    public function createdProjects(): HasMany
+    {
+        return $this->hasMany(Project::class, 'created_by');
     }
 }
