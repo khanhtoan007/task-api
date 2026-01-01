@@ -5,19 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskIndexRequest;
 use App\Http\Requests\TaskRequest;
 use App\Http\Resources\TaskResource;
-use App\Models\Task;
 use App\Services\TaskService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 
-final class TaskController extends BaseController
+final class TaskController
 {
     use ApiResponseTrait;
 
-    public function __construct(private readonly TaskService $taskService)
-    {
-        $this->authorizeResource(Task::class, 'task');
-    }
+    public function __construct(
+        private readonly TaskService $taskService
+    ) {}
 
     /**
      * Get paginated list of tasks with filters and sorting
@@ -32,8 +30,7 @@ final class TaskController extends BaseController
      */
     public function index(TaskIndexRequest $request): JsonResponse
     {
-        $tasks = $this->taskService->getAllTasks($request, Task::query()->visibleTo(auth()->user()));
-
+        $tasks = $this->taskService->getAllTasks($request);
         return $this->successResponse(
             data: [
                 'tasks' => TaskResource::collection($tasks->items()),
@@ -71,20 +68,19 @@ final class TaskController extends BaseController
         );
     }
 
-    public function show(Task $task): JsonResponse
+    public function show(string $id): JsonResponse
     {
         return $this->successResponse(
-            data : $this->taskService->show($task),
+            data : $this->taskService->getTaskById($id),
             message: 'Task retrieved successfully',
         );
     }
-
-    public function update(Task $task, TaskRequest $request): JsonResponse
+    public function update(string $id, TaskRequest $taskRequest): JsonResponse
     {
         return $this->successResponse(
-            data: $this->taskService->updateTask($task, $request->validated()),
+            data: $this->taskService->updateTask($id, $taskRequest->array()),
             message: 'Task updated successfully',
-            code: 200
+            code: 204
         );
     }
 }
