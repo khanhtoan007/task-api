@@ -11,4 +11,4 @@ use OpenApi\Annotations as OA;
  *     description="API Documentation"
  * )
  */
-class OpenApi {}
+final class OpenApi {}

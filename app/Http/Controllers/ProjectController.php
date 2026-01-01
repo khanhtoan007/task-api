@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AssignUserRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Services\ProjectService;
 use App\Traits\ApiResponseTrait;
@@ -18,6 +19,7 @@ final readonly class ProjectController
      *   path="/api/projects",
      *   tags={"Projects"},
      *   summary="Get list of projects",
+     *
      *   @OA\Response(response=200, description="OK")
      * )
      */
@@ -34,6 +36,7 @@ final readonly class ProjectController
      *   path="/api/projects",
      *   tags={"Projects"},
      *   summary="Create new project",
+     *
      *   @OA\Response(response=200, description="OK")
      * )
      */
@@ -51,12 +54,15 @@ final readonly class ProjectController
      *   path="/api/projects/{id}",
      *   tags={"Projects"},
      *   summary="Get project detail",
+     *
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
+     *
      *     @OA\Schema(type="string", format="uuid")
      *   ),
+     *
      *   @OA\Response(response=200, description="OK")
      * )
      */
@@ -75,12 +81,15 @@ final readonly class ProjectController
      *   path="/api/projects/{id}",
      *   tags={"Projects"},
      *   summary="Update project",
+     *
      *   @OA\Parameter(
      *     name="id",
      *     in="path",
      *     required=true,
+     *
      *     @OA\Schema(type="string", format="uuid")
      *   ),
+     *
      *   @OA\Response(response=200, description="OK")
      * )
      */
@@ -89,6 +98,31 @@ final readonly class ProjectController
         return $this->successResponse(
             data: $this->projectService->updateProject($id, $projectRequest),
             message: 'Project updated successfully'
+        );
+    }
+
+    /**
+     * @OA\Post(
+     *   path="/api/projects/{id}/assign-user",
+     *   tags={"Projects"},
+     *   summary="Assign user to project",
+     *
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *
+     *     @OA\Schema(type="string", format="uuid")
+     *   ),
+     *
+     *   @OA\Response(response=200, description="OK")
+     * )
+     */
+    public function assignUser(string $id, AssignUserRequest $request): JsonResponse
+    {
+        return $this->successResponse(
+            data: $this->projectService->assignUser($id, $request),
+            message: 'User assigned to project successfully'
         );
     }
 }

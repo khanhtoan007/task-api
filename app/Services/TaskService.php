@@ -44,6 +44,7 @@ final class TaskService
     public function createTask(array $data): Task
     {
         $data['created_by'] = auth()->user()->id;
+
         return Task::query()->create($data);
     }
 
@@ -53,6 +54,13 @@ final class TaskService
     public function getTaskById(string $id): ?Task
     {
         return Task::query()->with(['createdBy', 'assignedTo', 'project', 'subTasks'])->findOrFail($id);
+    }
+
+    public function updateTask(string $id, array $data): bool
+    {
+        $task = Task::query()->findOrFail($id);
+
+        return $task->update($data);
     }
 
     /**
@@ -65,10 +73,5 @@ final class TaskService
         }
 
         return $query;
-    }
-    public function updateTask(string $id, array $data): bool
-    {
-        $task = Task::query()->findOrFail($id);
-        return $task->update($data);
     }
 }

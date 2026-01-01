@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -57,21 +58,6 @@ final class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-        ];
-    }
-    
     public function createdTasks(): HasMany
     {
         return $this->hasMany(Task::class, 'created_by');
@@ -85,5 +71,25 @@ final class User extends Authenticatable implements JWTSubject
     public function createdProjects(): HasMany
     {
         return $this->hasMany(Project::class, 'created_by');
+    }
+
+    public function assignedProjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class, 'project_users', 'user_id', 'project_id');
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+        ];
     }
 }

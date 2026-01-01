@@ -22,7 +22,7 @@ final class Authenticate
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
@@ -72,7 +72,6 @@ final class Authenticate
      */
     protected function redirectTo(): ?string
     {
-        return $this->appUrl . '/login';
+        return $this->appUrl.'/login';
     }
 }
-
