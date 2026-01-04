@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskIndexRequest;
 use App\Http\Requests\TaskRequest;
 use App\Http\Resources\TaskResource;
+use App\Models\Task;
 use App\Services\TaskService;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 
 final class TaskController
 {
-    use ApiResponseTrait;
+    use ApiResponseTrait, AuthorizesRequests;
 
     public function __construct(
         private readonly TaskService $taskService
@@ -30,6 +32,7 @@ final class TaskController
      */
     public function index(TaskIndexRequest $request): JsonResponse
     {
+        // $this->authorize('viewAny');
         $tasks = $this->taskService->getAllTasks($request);
 
         return $this->successResponse(
@@ -69,18 +72,18 @@ final class TaskController
         );
     }
 
-    public function show(string $id): JsonResponse
+    public function show(Task $task): JsonResponse
     {
         return $this->successResponse(
-            data : $this->taskService->getTaskById($id),
+            data : $this->taskService->getTaskById($task),
             message: 'Task retrieved successfully',
         );
     }
 
-    public function update(string $id, TaskRequest $taskRequest): JsonResponse
+    public function update(Task $task, TaskRequest $taskRequest): JsonResponse
     {
         return $this->successResponse(
-            data: $this->taskService->updateTask($id, $taskRequest->array()),
+            data: $this->taskService->updateTask($task, $taskRequest->array()),
             message: 'Task updated successfully',
             code: 204
         );

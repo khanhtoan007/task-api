@@ -29,9 +29,10 @@ final class TaskService
      */
     public function getAllTasks(BaseIndexRequest $request): LengthAwarePaginator
     {
+        $user = auth()->guard('api')->user();
         return $this->paginateWithQueryBuilder(
             queryBuilder: $this->queryBuilder,
-            query: Task::query(),
+            query: Task::query()->where('created_by', $user->id)->orWhere('assigned_to', $user->id),
             request: $request,
             searchFields: $this->searchFields,
             customFilterCallback: fn (Builder $q, array $f) => $this->applyCustomFilters($q, $f)
@@ -43,7 +44,7 @@ final class TaskService
      */
     public function createTask(array $data): Task
     {
-        $data['created_by'] = auth()->user()->id;
+        $data['created_by'] = auth()->guard('api')->user()->id;
 
         return Task::query()->create($data);
     }
@@ -56,10 +57,8 @@ final class TaskService
         return Task::query()->with(['createdBy', 'assignedTo', 'project', 'subTasks'])->findOrFail($id);
     }
 
-    public function updateTask(string $id, array $data): bool
+    public function updateTask(Task $task, array $data): bool
     {
-        $task = Task::query()->findOrFail($id);
-
         return $task->update($data);
     }
 

@@ -36,7 +36,12 @@ Route::middleware('auth:api')->group(function (): void {
     Route::prefix('projects/{project}')->group(function (): void {
         Route::get('members', [ProjectMemberController::class, 'index']);
         Route::post('members', [ProjectMemberController::class, 'store']);
-       Route::patch('members/{member}', [ProjectMemberController::class, 'update']);
+        Route::patch('members/{member}', [ProjectMemberController::class, 'update']);
         Route::delete('members/{member}', [ProjectMemberController::class, 'destroy']);
+
+        // Route::get('tasks', [TaskController::class, 'index']);
+        // Route::post('tasks', [TaskController::class, 'store']);
+        // Route::patch('tasks/{task}', [TaskController::class, 'update']);
+        // Route::delete('tasks/{task}', [TaskController::class, 'destroy']);
     });
 });

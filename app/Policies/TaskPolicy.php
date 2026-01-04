@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Project;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class ProjectPolicy
+class TaskPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,9 +19,9 @@ class ProjectPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Project $project): bool
+    public function view(User $user, Task $task): bool
     {
-        return $project->members->contains('user_id', $user->id);
+        return false;
     }
 
     /**
@@ -35,15 +35,15 @@ class ProjectPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Project $project): bool
+    public function update(User $user, Task $task): bool
     {
-        return $project->isOwner($user);
+        return false;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Project $project): bool
+    public function delete(User $user, Task $task): bool
     {
         return false;
     }
@@ -51,29 +51,15 @@ class ProjectPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Project $project): bool
+    public function restore(User $user, Task $task): bool
     {
         return false;
     }
 
     /**
-     * Determine whether user can assign a user to a project.
-     */
-    public function canAssign(User $user, Project $project): bool
-    {
-        return $project->isOwner($user);
-    }
-    /**
-     * Determine whether user can view member of this project
-     */
-    public function canViewMembers(User $user, Project $project): bool
-    {
-        return $project->members->contains('user_id', $user->id);
-    }
-    /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Project $project): bool
+    public function forceDelete(User $user, Task $task): bool
     {
         return false;
     }

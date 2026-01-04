@@ -90,10 +90,8 @@ final class ProjectService
         }
     }
 
-    public function updateProject(string $id, ProjectRequest $projectRequest): bool
+    public function updateProject(Project $project, ProjectRequest $projectRequest): bool
     {
-        $project = Project::query()->findOrFail($id);
-
         return $project->update($projectRequest->toArray());
     }
 }

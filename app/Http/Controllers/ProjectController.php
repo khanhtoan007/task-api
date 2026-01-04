@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\ApiException;
 use App\Http\Requests\ProjectRequest;
+use App\Models\Project;
 use App\Services\ProjectService;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 
 final readonly class ProjectController
 {
-    use ApiResponseTrait;
+    use ApiResponseTrait, AuthorizesRequests;
 
     public function __construct(private ProjectService $projectService) {}
 
@@ -69,10 +71,9 @@ final readonly class ProjectController
      *   @OA\Response(response=200, description="OK")
      * )
      */
-    public function show(string $id): JsonResponse
+    public function show(Project $project): JsonResponse
     {
-        $project = $this->projectService->getProject($id);
-
+        $this->authorize('view', $project);
         return $this->successResponse(
             data: $project,
             message: 'Project fetched successfully'
@@ -96,10 +97,11 @@ final readonly class ProjectController
      *   @OA\Response(response=200, description="OK")
      * )
      */
-    public function update(string $id, ProjectRequest $projectRequest): JsonResponse
+    public function update(Project $project, ProjectRequest $projectRequest): JsonResponse
     {
+        $this->authorize('update', $project);
         return $this->successResponse(
-            data: $this->projectService->updateProject($id, $projectRequest),
+            data: $this->projectService->updateProject($project, $projectRequest),
             message: 'Project updated successfully'
         );
     }
