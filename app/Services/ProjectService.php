@@ -32,10 +32,10 @@ final class ProjectService
         return Project::query()
             ->with('tasks')
             ->with([
-                'projectMembers' => function ($query): void {
+                'members' => function ($query): void {
                     $query->select('id', 'project_id', 'user_id', 'role', 'joined_at', 'invited_by');
                 },
-                'projectMembers.user' => function ($query): void {
+                'members.user' => function ($query): void {
                     $query->select('id', 'name');
                 },
             ])

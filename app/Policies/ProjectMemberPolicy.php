@@ -37,6 +37,10 @@ final class ProjectMemberPolicy
      */
     public function update(User $user, ProjectMember $projectMember): bool
     {
+        if (! $projectMember->relationLoaded('project')) {
+            $projectMember->load('project');
+        }
+
         return $projectMember->project->isOwner($user);
     }
 
@@ -45,9 +49,17 @@ final class ProjectMemberPolicy
      */
     public function delete(User $user, ProjectMember $projectMember): bool
     {
-        if ($projectMember->user->id === $user->id) {
+        if (! $projectMember->relationLoaded('project')) {
+            $projectMember->load('project');
+        }
+        if (! $projectMember->relationLoaded('user')) {
+            $projectMember->load('user');
+        }
+
+        if ($projectMember->user_id === $user->id) {
             return false;
         }
+
         return $projectMember->project->isOwner($user);
     }
 

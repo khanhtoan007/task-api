@@ -21,7 +21,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return $project->members->contains('user_id', $user->id);
+        return $project->isMember($user);
     }
 
     /**
@@ -68,7 +68,7 @@ class ProjectPolicy
      */
     public function canViewMembers(User $user, Project $project): bool
     {
-        return $project->members->contains('user_id', $user->id);
+        return $project->isMember($user);
     }
     /**
      * Determine whether the user can permanently delete the model.

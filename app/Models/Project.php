@@ -24,9 +24,9 @@ use Illuminate\Support\Collection;
  * @property Carbon $end_date
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property Collection<ProjectMember> $owners;
- * @property Collection<ProjectMember> $contributors;
- * @property Collection<ProjectMember> $members;
+ * @property Collection<ProjectMember> $owners
+ * @property Collection<ProjectMember> $contributors
+ * @property Collection<ProjectMember> $members
  */
 final class Project extends Model
 {
@@ -51,7 +51,8 @@ final class Project extends Model
 
     public function tasks(): HasMany
     {
-        return $this->hasMany(Task::class)->whereNull('parent_id');
+        return $this->hasMany(Task::class)
+            ->whereNull('parent_id');
     }
 
     public function subTasks(): HasMany
@@ -83,6 +84,22 @@ final class Project extends Model
 
     public function isOwner(User $user): bool
     {
-        return $this->owners->contains('user_id', $user->id);
+        return $this->owners()
+            ->where('user_id', $user->id)
+            ->exists();
+    }
+
+    public function isContributor(User $user): bool
+    {
+        return $this->contributors()
+            ->where('user_id', $user->id)
+            ->exists();
+    }
+
+    public function isMember(User $user): bool
+    {
+        return $this->members()
+            ->where('user_id', $user->id)
+            ->exists();
     }
 }

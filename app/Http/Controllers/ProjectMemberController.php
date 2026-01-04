@@ -65,7 +65,14 @@ final class ProjectMemberController
      */
     public function update(AssignUserRequest $request, Project $project, ProjectMember $member): JsonResponse
     {
-       $this->authorize('update', $member);
+        $member->load('project');
+        
+        if ($member->project_id !== $project->id) {
+            abort(404, 'Member not found in this project');
+        }
+
+        $this->authorize('update', $member);
+        
         return $this->successResponse(
             data: $this->projectMemberService->update($request, $member),
             message: 'User role update successfully'
