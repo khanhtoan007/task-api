@@ -15,8 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('project_id')->references('id')->on('projects')->cascadeOnDelete();
             $table->foreignUuid('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->unique(['project_id', 'user_id']);
             $table->string('role');
-            $table->timestamp('joined_at');
             $table->uuid('invited_by')->nullable();
             $table->foreign('invited_by')->references('id')->on('users')->cascadeOnDelete();
             $table->timestamps();

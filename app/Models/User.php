@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Enums\UserStatusEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,6 +18,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $email
  * @property string $password
  * @property Carbon $email_verified_at
+ * @property UserStatusEnum $status
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -75,7 +77,7 @@ final class User extends Authenticatable implements JWTSubject
 
     public function assignedProjects(): BelongsToMany
     {
-        return $this->belongsToMany(Project::class, 'project_users', 'user_id', 'project_id');
+        return $this->belongsToMany(Project::class, 'project_members', 'user_id', 'project_id');
     }
 
     /**
@@ -90,6 +92,7 @@ final class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
+            'status' => UserStatusEnum::class,
         ];
     }
 }

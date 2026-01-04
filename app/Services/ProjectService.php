@@ -43,18 +43,13 @@ final class ProjectService
             ->toArray();
     }
 
-    public function createProject(ProjectRequest $projectRequest)
+    /**
+     * @throws ApiException
+     */
+    public function createProject(ProjectRequest $projectRequest): Project
     {
         try {
-            DB::transaction(function () use ($projectRequest) {
-                // create owner in project_member
-                ProjectMember::query()->create([
-                    'project_id' => $projectRequest->id,
-                    'user_id' => auth()->guard('api')->user()->id,
-                    'role' => ProjectRoleEnum::OWNER,
-                    'joined_at' => now(),
-                    'invited_by' => auth()->guard('api')->user()->id,
-                ]);
+            return DB::transaction(function () use ($projectRequest) {
                 $project = Project::query()->create([
                     'name' => $projectRequest->name,
                     'description' => $projectRequest->description,
@@ -63,7 +58,14 @@ final class ProjectService
                     'created_by' => auth()->guard('api')->user()->id,
                     'status' => ProjectStatusEnum::DRAFT,
                 ]);
-
+                // create owner in project_member
+                ProjectMember::query()->create([
+                    'project_id' => $project->id,
+                    'user_id' => auth()->guard('api')->user()->id,
+                    'role' => ProjectRoleEnum::OWNER,
+                    'joined_at' => now(),
+                    'invited_by' => auth()->guard('api')->user()->id,
+                ]);
                 return $project;
             });
         } catch (Exception $e) {
@@ -93,31 +95,5 @@ final class ProjectService
         $project = Project::query()->findOrFail($id);
 
         return $project->update($projectRequest->toArray());
-    }
-
-    public function assignUser(string $id, AssignUserRequest $request): bool
-    {
-        try {
-            $project = Project::query()->findOrFail($id);
-            $user = User::query()->findOrFail($request->user_id);
-            if ($project->created_by === $user->id) {
-                throw new ApiException('You cannot assign yourself as a member', 400);
-            }
-            if (ProjectMember::query()->where('project_id', $project->id)->where('user_id', $user->id)->exists()) {
-                throw new ApiException('User is already a member of the project', 400);
-            }
-            ProjectMember::query()->create([
-                'project_id' => $id,
-                'user_id' => $user->id,
-                'role' => $request->role,
-                'joined_at' => now(),
-                'invited_by' => auth()->guard('api')->user()->id,
-            ]);
-
-            return true;
-        } catch (Exception $e) {
-            Log::error('Failed to assign user to project: '.$e->getMessage());
-            throw $e;
-        }
     }
 }

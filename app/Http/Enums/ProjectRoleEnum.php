@@ -5,13 +5,13 @@ namespace App\Http\Enums;
 enum ProjectRoleEnum: string
 {
     case OWNER = 'owner';
-    case MEMBER = 'member';
+    case CONTRIBUTOR = 'contributor';
 
     public function canTransitionTo(self $to): bool
     {
         return match ($this) {
-            self::OWNER => in_array($to, [self::MEMBER]),
-            self::MEMBER => in_array($to, [self::OWNER]),
+            self::OWNER => $to === self::CONTRIBUTOR,
+            self::CONTRIBUTOR => $to === self::OWNER,
         };
     }
 }

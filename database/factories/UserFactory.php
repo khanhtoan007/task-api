@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Http\Enums\UserStatusEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -26,6 +27,7 @@ final class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
+            'status' => UserStatusEnum::ACTIVE,
             'password' => self::$password ??= Hash::make('123123123'),
         ];
     }

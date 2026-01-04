@@ -11,7 +11,9 @@ use Illuminate\Support\Carbon;
 /**
  * @property string $id
  * @property string $project_id
+ * @property Project $project
  * @property string $user_id
+ * @property User $user
  * @property string $role
  * @property Carbon $joined_at
  * @property Carbon $invited_by
@@ -21,6 +23,10 @@ use Illuminate\Support\Carbon;
 final class ProjectMember extends Model
 {
     use HasFactory, HasUuids;
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'project_id',

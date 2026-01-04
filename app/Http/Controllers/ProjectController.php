@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AssignUserRequest;
+use App\Exceptions\ApiException;
 use App\Http\Requests\ProjectRequest;
 use App\Services\ProjectService;
 use App\Traits\ApiResponseTrait;
@@ -22,6 +22,7 @@ final readonly class ProjectController
      *
      *   @OA\Response(response=200, description="OK")
      * )
+     * @throws ApiException
      */
     public function index(): JsonResponse
     {
@@ -39,6 +40,8 @@ final readonly class ProjectController
      *
      *   @OA\Response(response=200, description="OK")
      * )
+     *
+     * @throws ApiException
      */
     public function store(ProjectRequest $projectRequest): JsonResponse
     {
@@ -98,31 +101,6 @@ final readonly class ProjectController
         return $this->successResponse(
             data: $this->projectService->updateProject($id, $projectRequest),
             message: 'Project updated successfully'
-        );
-    }
-
-    /**
-     * @OA\Post(
-     *   path="/api/projects/{id}/assign-user",
-     *   tags={"Projects"},
-     *   summary="Assign user to project",
-     *
-     *   @OA\Parameter(
-     *     name="id",
-     *     in="path",
-     *     required=true,
-     *
-     *     @OA\Schema(type="string", format="uuid")
-     *   ),
-     *
-     *   @OA\Response(response=200, description="OK")
-     * )
-     */
-    public function assignUser(string $id, AssignUserRequest $request): JsonResponse
-    {
-        return $this->successResponse(
-            data: $this->projectService->assignUser($id, $request),
-            message: 'User assigned to project successfully'
         );
     }
 }

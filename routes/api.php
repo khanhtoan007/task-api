@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectMemberController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,12 @@ Route::prefix('auth')->group(function (): void {
 
 Route::middleware('auth:api')->group(function (): void {
     Route::apiResource('projects', ProjectController::class);
-    Route::post('projects/{id}/assign-user', [ProjectController::class, 'assignUser']);
     Route::apiResource('tasks', TaskController::class);
+
+    Route::prefix('projects/{project}')->group(function (): void {
+        Route::get('members', [ProjectMemberController::class, 'index']);
+        Route::post('members', [ProjectMemberController::class, 'store']);
+       Route::patch('members/{member}', [ProjectMemberController::class, 'update']);
+        Route::delete('members/{member}', [ProjectMemberController::class, 'destroy']);
+    });
 });

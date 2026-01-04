@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 use App\Contracts\QueryBuilderInterface;
+use App\Models\ProjectMember;
+use App\Policies\ProjectMemberPolicy;
 use App\Services\QueryBuilder;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use L5Swagger\L5SwaggerServiceProvider;
 use NunoMaduro\Collision\Provider;
@@ -29,5 +32,6 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        Gate::policy(ProjectMember::class, ProjectMemberPolicy::class);
     }
 }
