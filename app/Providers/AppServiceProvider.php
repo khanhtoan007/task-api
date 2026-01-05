@@ -6,6 +6,7 @@ use App\Contracts\QueryBuilderInterface;
 use App\Models\ProjectMember;
 use App\Policies\ProjectMemberPolicy;
 use App\Services\QueryBuilder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use L5Swagger\L5SwaggerServiceProvider;
@@ -32,6 +33,14 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
-        Gate::policy(ProjectMember::class, ProjectMemberPolicy::class);
+        if(app()->isLocal()){
+            DB::listen(function ($q) {
+                $sql = vsprintf(
+                    str_replace('?', "'%s'", $q->sql),
+                    $q->bindings
+                );
+                logger("[SQL] {$sql} ({$q->time} ms)");
+            });
+        }
     }
 }

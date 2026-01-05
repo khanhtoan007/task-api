@@ -6,10 +6,12 @@ namespace App\Services;
 
 use App\Contracts\QueryBuilderInterface;
 use App\Http\Requests\BaseIndexRequest;
+use App\Models\Project;
 use App\Models\Task;
 use App\Traits\ResponseListQuery;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 final class TaskService
 {
@@ -52,9 +54,10 @@ final class TaskService
     /**
      * Get task by ID
      */
-    public function getTaskById(string $id): ?Task
+    public function getTaskById(Task $task): ?Task
     {
-        return Task::query()->with(['createdBy', 'assignedTo', 'project', 'subTasks'])->findOrFail($id);
+        $task->load(['createdBy', 'assignedTo', 'subTasks']);
+        return $task;
     }
 
     public function updateTask(Task $task, array $data): bool
@@ -72,5 +75,15 @@ final class TaskService
         }
 
         return $query;
+    }
+
+    public function deleteTask(Task $task): bool
+    {
+        return $task->delete();
+    }
+
+    public function getProjectTasks(Project $project): Collection
+    {
+        return $project->tasks()->withCount('subTasks')->get();
     }
 }

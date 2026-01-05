@@ -49,6 +49,8 @@ final class ProjectMemberService
         $projectMember->update([
             'role' => $request->role,
         ]);
+        
+        $projectMember->refresh();
         return $projectMember;
     }
     public function remove(ProjectMember $projectMember): bool

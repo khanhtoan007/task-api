@@ -27,6 +27,7 @@ use Illuminate\Support\Collection;
  * @property Collection<ProjectMember> $owners
  * @property Collection<ProjectMember> $contributors
  * @property Collection<ProjectMember> $members
+ * @property Collection<Task> $tasks
  */
 final class Project extends Model
 {
@@ -51,8 +52,7 @@ final class Project extends Model
 
     public function tasks(): HasMany
     {
-        return $this->hasMany(Task::class)
-            ->whereNull('parent_id');
+        return $this->hasMany(Task::class)->whereNull('parent_id');
     }
 
     public function subTasks(): HasMany

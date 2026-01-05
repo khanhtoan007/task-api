@@ -29,6 +29,8 @@ final class Task extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+//    protected $appends = ['has_sub_tasks'];
+
     protected $fillable = [
         'title',
         'description',

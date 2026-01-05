@@ -31,17 +31,7 @@ Route::prefix('auth')->group(function (): void {
 
 Route::middleware('auth:api')->group(function (): void {
     Route::apiResource('projects', ProjectController::class);
-    Route::apiResource('tasks', TaskController::class);
-
-    Route::prefix('projects/{project}')->group(function (): void {
-        Route::get('members', [ProjectMemberController::class, 'index']);
-        Route::post('members', [ProjectMemberController::class, 'store']);
-        Route::patch('members/{member}', [ProjectMemberController::class, 'update']);
-        Route::delete('members/{member}', [ProjectMemberController::class, 'destroy']);
-
-        // Route::get('tasks', [TaskController::class, 'index']);
-        // Route::post('tasks', [TaskController::class, 'store']);
-        // Route::patch('tasks/{task}', [TaskController::class, 'update']);
-        // Route::delete('tasks/{task}', [TaskController::class, 'destroy']);
-    });
+    Route::apiResource('projects.members', ProjectMemberController::class)->only(['index', 'store', 'update', 'destroy'])->scoped();
+    Route::apiResource('projects.tasks', TaskController::class)->scoped();
+    Route::get('tasks', [TaskController::class, 'myTasks']);
 });

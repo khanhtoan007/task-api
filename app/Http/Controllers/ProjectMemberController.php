@@ -66,13 +66,11 @@ final class ProjectMemberController
     public function update(AssignUserRequest $request, Project $project, ProjectMember $member): JsonResponse
     {
         $member->load('project');
-        
         if ($member->project_id !== $project->id) {
             abort(404, 'Member not found in this project');
         }
 
         $this->authorize('update', $member);
-        
         return $this->successResponse(
             data: $this->projectMemberService->update($request, $member),
             message: 'User role update successfully'
@@ -86,8 +84,7 @@ final class ProjectMemberController
     {
         $this->authorize('delete', $member);
         return $this->successResponse(
-            message: 'User remove from project '.$this->projectMemberService->remove($member) ? 'successfully' : 'failed',
-            code: 200
+            message: 'User remove from project '.$this->projectMemberService->remove($member) ? 'successfully' : 'failed'
         );
     }
 }

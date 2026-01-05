@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskIndexRequest;
 use App\Http\Requests\TaskRequest;
 use App\Http\Resources\TaskResource;
+use App\Models\Project;
 use App\Models\Task;
 use App\Services\TaskService;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 
@@ -30,22 +32,11 @@ final class TaskController
      *   @OA\Response(response=200, description="OK")
      * )
      */
-    public function index(TaskIndexRequest $request): JsonResponse
+    public function index(Project $project): JsonResponse
     {
-        // $this->authorize('viewAny');
-        $tasks = $this->taskService->getAllTasks($request);
-
         return $this->successResponse(
-            data: [
-                'tasks' => TaskResource::collection($tasks->items()),
-                'pagination' => [
-                    'current_page' => $tasks->currentPage(),
-                    'last_page' => $tasks->lastPage(),
-                    'per_page' => $tasks->perPage(),
-                    'total' => $tasks->total(),
-                ],
-            ],
-            message: 'Tasks retrieved successfully'
+            data: $this->taskService->getProjectTasks($project),
+            message: 'Tasks of project '.$project->name.' successfully retrieved.',
         );
     }
 
@@ -60,7 +51,7 @@ final class TaskController
      *   @OA\Response(response=200, description="OK")
      * )
      */
-    public function store(TaskRequest $request): JsonResponse
+    public function store(TaskRequest $request, Project $project): JsonResponse
     {
         $validated = $request->validated();
         $task = $this->taskService->createTask($validated);
@@ -72,7 +63,7 @@ final class TaskController
         );
     }
 
-    public function show(Task $task): JsonResponse
+    public function show(Project $project, Task $task): JsonResponse
     {
         return $this->successResponse(
             data : $this->taskService->getTaskById($task),
@@ -80,12 +71,46 @@ final class TaskController
         );
     }
 
-    public function update(Task $task, TaskRequest $taskRequest): JsonResponse
+    /**
+     * @throws AuthorizationException
+     */
+    public function update(TaskRequest $taskRequest, Project $project, Task $task): JsonResponse
     {
+        $this->authorize('update', $task);
         return $this->successResponse(
             data: $this->taskService->updateTask($task, $taskRequest->array()),
             message: 'Task updated successfully',
             code: 204
+        );
+    }
+
+    /**
+     * @throws AuthorizationException
+     */
+    public function destroy(Project $project, Task $task): JsonResponse
+    {
+        $this->authorize('delete', $task);
+        return $this->successResponse(
+            data: $this->taskService->deleteTask($task),
+            message: 'Task deleted successfully',
+        );
+    }
+
+    public function myTasks(TaskIndexRequest $request): JsonResponse
+    {
+        $tasks = $this->taskService->getAllTasks($request);
+
+        return $this->successResponse(
+            data: [
+                'tasks' => TaskResource::collection($tasks->items()),
+                'pagination' => [
+                    'current_page' => $tasks->currentPage(),
+                    'last_page' => $tasks->lastPage(),
+                    'per_page' => $tasks->perPage(),
+                    'total' => $tasks->total(),
+                ],
+            ],
+            message: 'Tasks retrieved successfully'
         );
     }
 }
