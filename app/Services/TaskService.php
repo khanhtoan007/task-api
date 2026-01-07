@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Contracts\QueryBuilderInterface;
 use App\Http\Requests\BaseIndexRequest;
+use App\Models\Project;
 use App\Models\Task;
 use App\Traits\ResponseListQuery;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -29,13 +30,27 @@ final class TaskService
      */
     public function getAllTasks(BaseIndexRequest $request): LengthAwarePaginator
     {
+        // Extract custom filters từ request (status, etc.)
+        // Custom filters được handle trong service layer, bổ sung vào query
+        $customFilters = [];
+        if ($request->has('status') && $request->filled('status')) {
+            $customFilters['status'] = $request->input('status');
+        }
+
         return $this->paginateWithQueryBuilder(
             queryBuilder: $this->queryBuilder,
             query: Task::query(),
             request: $request,
             searchFields: $this->searchFields,
+            customFilters: $customFilters,
             customFilterCallback: fn (Builder $q, array $f) => $this->applyCustomFilters($q, $f)
         );
+    }
+
+
+    public function getTasksByProject(Project $project): array
+    {
+        return Task::query()->where('project_id', $project->id)->get()->toArray();
     }
 
     /**
@@ -64,10 +79,13 @@ final class TaskService
     }
 
     /**
-     * Apply custom filters (status, etc.)
+     * Apply custom filters từ request
+     * Custom filters được handle ở đây trong service layer
      */
     private function applyCustomFilters(Builder $query, array $filters): Builder
     {
+        // Status filter được lấy từ filters array (đã được extract từ request)
+        // Có thể thêm custom validation logic ở đây nếu cần
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
         }

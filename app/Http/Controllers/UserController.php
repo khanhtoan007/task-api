@@ -3,18 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BaseIndexRequest;
-use App\Http\Requests\AssignUserRequest;
+use App\Http\Requests\CreateUserContestRequest;
 use App\Http\Requests\ProjectRequest;
-use App\Models\Project;
+use App\Http\Requests\UpdateUserContestRequest;
+use App\Models\User;
 use App\Services\ProjectService;
+use App\Services\UserService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 
-final readonly class ProjectController
+final readonly class UserController
 {
     use ApiResponseTrait;
 
-    public function __construct(private ProjectService $projectService) {}
+    public function __construct(
+        private ProjectService $projectService,
+        private UserService $userService
+    ) {}
 
     /**
      * @OA\Get(
@@ -80,61 +85,52 @@ final readonly class ProjectController
         );
     }
 
-    /**
-     * @OA\Put(
-     *   path="/api/projects/{id}",
+    public function update(User $user, UpdateUserContestRequest $userRequest): JsonResponse
+    {
+        $userRequest->validated();
+        return $this->successResponse(
+            data: $this->userService->updateUser($user, $userRequest),
+            message: 'User updated successfully'
+        );
+    }
+
+
+
+
+        /**
+     * @OA\Get(
+     *   path="/api/projects",
      *   tags={"Projects"},
-     *   summary="Update project",
-     *
-     *   @OA\Parameter(
-     *     name="id",
-     *     in="path",
-     *     required=true,
-     *
-     *     @OA\Schema(type="string", format="uuid")
-     *   ),
+     *   summary="Get list of projects",
      *
      *   @OA\Response(response=200, description="OK")
      * )
      */
-    public function update(Project $project, ProjectRequest $projectRequest): JsonResponse
+    public function getAllContestUser(BaseIndexRequest $request): JsonResponse
     {
-        return $this->successResponse(
-            data: $this->projectService->updateProject($project, $projectRequest),
-            message: 'Project updated successfully'
+        $users = $this->userService->getAllUsers($request);
+
+        return $this->paginatedResponse(
+            paginator: $users,
+            message: 'Users fetched successfully'
         );
     }
 
-    /**
-     * @OA\Post(
-     *   path="/api/projects/{id}/assign-user",
-     *   tags={"Projects"},
-     *   summary="Assign user to project",
-     *
-     *   @OA\Parameter(
-     *     name="id",
-     *     in="path",
-     *     required=true,
-     *
-     *     @OA\Schema(type="string", format="uuid")
-     *   ),
-     *
-     *   @OA\Response(response=200, description="OK")
-     * )
-     */
-    public function assignUser(string $id, AssignUserRequest $request): JsonResponse
+    public function delete(User $user): JsonResponse
     {
         return $this->successResponse(
-            data: $this->projectService->assignUser($id, $request),
-            message: 'User assigned to project successfully'
+            data: $this->userService->destroy($user->id),
+            message: 'User deleted successfully'
         );
     }
 
-    public function destroy(Project $project): JsonResponse
+    public function createUserContest(CreateUserContestRequest $createUser): JsonResponse
     {
         return $this->successResponse(
-            data: $this->projectService->destroy($project->id),
-            message: 'Project deleted successfully'
+            data: $this->userService->createUserContest($createUser),
+            message: 'User contest created successfully',
+            code: 201
         );
     }
+
 }

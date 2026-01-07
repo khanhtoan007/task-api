@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TaskIndexRequest;
+use App\Http\Requests\BaseIndexRequest;
 use App\Http\Requests\TaskRequest;
 use App\Http\Resources\TaskResource;
+use App\Models\Project;
 use App\Services\TaskService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
@@ -28,20 +29,13 @@ final class TaskController
      *   @OA\Response(response=200, description="OK")
      * )
      */
-    public function index(TaskIndexRequest $request): JsonResponse
+    public function index(BaseIndexRequest $request): JsonResponse
     {
         $tasks = $this->taskService->getAllTasks($request);
 
-        return $this->successResponse(
-            data: [
-                'tasks' => TaskResource::collection($tasks->items()),
-                'pagination' => [
-                    'current_page' => $tasks->currentPage(),
-                    'last_page' => $tasks->lastPage(),
-                    'per_page' => $tasks->perPage(),
-                    'total' => $tasks->total(),
-                ],
-            ],
+        return $this->paginatedResponse(
+            paginator: $tasks,
+            items: TaskResource::collection($tasks->items()),
             message: 'Tasks retrieved successfully'
         );
     }
@@ -77,6 +71,52 @@ final class TaskController
         );
     }
 
+    /**
+     * Get tasks by project
+     */
+    /**
+     * @OA\Get(
+     *   path="/api/projects/{project}/tasks",
+     *   summary="Get tasks by project",
+     *   tags={"Tasks"},
+     *
+     *   @OA\Parameter(
+     *     name="project",
+     *     in="path",
+     *     required=true,
+     *     @OA\Schema(type="string", format="uuid")
+     *   ),
+     *
+     *   @OA\Response(response=200, description="OK")
+     * )
+     */
+    public function getTasksByProject(Project $project): JsonResponse
+    {
+        return $this->successResponse(
+            data: $this->taskService->getTasksByProject($project),
+            message: 'Tasks retrieved successfully',
+        );
+    }
+
+    /**
+     * Update a task
+     */
+    /**
+     * @OA\Put(
+     *   path="/api/tasks/{id}",
+     *   summary="Update a task",
+     *   tags={"Tasks"},
+     *
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     @OA\Schema(type="string", format="uuid")
+     *   ),
+     *
+     *   @OA\Response(response=200, description="OK")
+     * )
+     */
     public function update(string $id, TaskRequest $taskRequest): JsonResponse
     {
         return $this->successResponse(

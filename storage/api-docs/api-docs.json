@@ -12,9 +12,48 @@
                     "Auth"
                 ],
                 "operationId": "8dcb70df1020986038d098cc08d05dae",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string"
+                                        },
+                                        "refresh_token": {
+                                            "type": "string"
+                                        },
+                                        "token_type": {
+                                            "type": "string"
+                                        },
+                                        "expires_in": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -145,6 +184,31 @@
                 }
             }
         },
+        "/api/projects/{id}/assign-user": {
+            "post": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Assign user to project",
+                "operationId": "fc86dd066b55d5edd9a1d71136365fd6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/tasks": {
             "get": {
                 "summary": "List tasks",
@@ -157,7 +221,7 @@
             },
             "post": {
                 "summary": "Create a task",
-                "operationId": "6bec0c877776e4762004ffe798e1a13b",
+                "operationId": "f803ebdb2300acdb7e93bbe8d0b9a2e8",
                 "responses": {
                     "200": {
                         "description": "OK"

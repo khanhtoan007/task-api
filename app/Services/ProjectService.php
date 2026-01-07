@@ -2,30 +2,28 @@
 
 namespace App\Services;
 
+use App\Contracts\QueryBuilderInterface;
 use App\Exceptions\ApiException;
 use App\Http\Enums\ProjectRoleEnum;
-use App\Http\Enums\ProjectStatusEnum;
+use App\Http\Requests\BaseIndexRequest;
 use App\Http\Requests\AssignUserRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use App\Models\ProjectMember;
 use App\Models\User;
+use App\Traits\ResponseListQuery;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 final class ProjectService
 {
-    public function getProjects(): array
-    {
-        return Project::query()->get(
-            'id', 'name', 'description', 'start_date', 'end_date', 'created_by', 'status'
-        )->with([
-            'createdBy' => function ($query): void {
-                $query->select('id', 'name', 'email');
-            },
-        ])->toArray();
-    }
+    use ResponseListQuery;
+
+    public function __construct(
+        private readonly QueryBuilderInterface $queryBuilder
+    ) {}
 
     public function getProject(string $projectId): array
     {
@@ -47,21 +45,20 @@ final class ProjectService
     {
         try {
             DB::transaction(function () use ($projectRequest) {
-                // create owner in project_member
-                ProjectMember::query()->create([
-                    'project_id' => $projectRequest->id,
-                    'user_id' => auth()->guard('api')->user()->id,
-                    'role' => ProjectRoleEnum::OWNER,
-                    'joined_at' => now(),
-                    'invited_by' => auth()->guard('api')->user()->id,
-                ]);
                 $project = Project::query()->create([
                     'name' => $projectRequest->name,
                     'description' => $projectRequest->description,
                     'start_date' => $projectRequest->start_date,
                     'end_date' => $projectRequest->end_date,
                     'created_by' => auth()->guard('api')->user()->id,
-                    'status' => ProjectStatusEnum::DRAFT,
+                    'status' => $projectRequest->status,
+                ]);
+                ProjectMember::query()->create([
+                    'project_id' => $project->id,
+                    'user_id' => auth()->guard('api')->user()->id,
+                    'role' => ProjectRoleEnum::OWNER,
+                    'joined_at' => now(),
+                    'invited_by' => auth()->guard('api')->user()->id,
                 ]);
 
                 return $project;
@@ -72,27 +69,18 @@ final class ProjectService
         }
     }
 
-    public function getProjectsByUser(): array
+    public function getProjectsByUser(BaseIndexRequest $request): LengthAwarePaginator
     {
-        try {
-            $projects = Project::query()->where('created_by', auth()->guard('api')->user()->id)
-                ->with([
-                    'createdBy' => function ($query): void {
-                        $query->select('id', 'name', 'email');
-                    },
-                ])->get()->toArray();
-
-            return $projects;
-        } catch (ApiException $e) {
-            throw $e;
-        }
-    }
-
-    public function updateProject(string $id, ProjectRequest $projectRequest): bool
-    {
-        $project = Project::query()->findOrFail($id);
-
-        return $project->update($projectRequest->toArray());
+        $query = Project::query()
+        ->with(['createdBy:id,name,email'])
+        ->where('created_by', auth()->guard('api')->user()->id);
+        return $this->paginateWithQueryBuilder(
+            queryBuilder: $this->queryBuilder,
+            query: $query,
+            request: $request,
+            searchFields: ['name', 'description', 'created_by'],
+            customFilters: []
+        );
     }
 
     public function assignUser(string $id, AssignUserRequest $request): bool
@@ -118,6 +106,29 @@ final class ProjectService
         } catch (Exception $e) {
             Log::error('Failed to assign user to project: '.$e->getMessage());
             throw $e;
+        }
+    }
+
+    public function destroy(string $id): bool
+    {
+        try{
+            $project = Project::query()->findOrFail($id);
+            $project->delete();
+            return true;
+        } catch (Exception $e) {
+            Log::error('Failed to delete project: '.$e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function updateProject(Project $project, ProjectRequest $projectRequest)
+    {
+        try {
+            $project->update($projectRequest->toArray());
+            return $project->refresh();
+        } catch (Exception $e) {
+            Log::error('Failed to update project: '.$e->getMessage());
+            throw new ApiException('Failed to update project', 500);
         }
     }
 }

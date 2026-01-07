@@ -53,7 +53,7 @@ final class QueryBuilder implements QueryBuilderInterface
      */
     public function applySorting(Builder $query, string $sortBy, string $sortOrder): Builder
     {
-        return $query->orderBy($sortBy, $sortOrder);
+        return $query->reorder()->orderBy($sortBy, $sortOrder);
     }
 
     /**

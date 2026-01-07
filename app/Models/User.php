@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -37,6 +38,10 @@ final class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'sex',
+        'dob',
+        'phone',
+        'contest'
     ];
 
     /**
@@ -78,6 +83,11 @@ final class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Project::class, 'project_users', 'user_id', 'project_id');
     }
 
+    public function contest(): BelongsTo
+    {
+        return $this->belongsTo(Contest::class, 'contest');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -90,6 +100,7 @@ final class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
+            'dob' => 'datetime'
         ];
     }
 }

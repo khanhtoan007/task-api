@@ -20,8 +20,23 @@ final readonly class AuthController
      * @OA\Post(
      *   path="/api/auth/login",
      *   tags={"Auth"},
-     *
-     *   @OA\Response(response=200, description="OK")
+     *   @OA\RequestBody(
+     *     required=true,
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="email", type="string"),
+     *       @OA\Property(property="password", type="string")
+     *     )
+     *   ),
+     *   @OA\Response(response=200, description="OK",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="access_token", type="string"),
+     *       @OA\Property(property="refresh_token", type="string"),
+     *       @OA\Property(property="token_type", type="string"),
+     *       @OA\Property(property="expires_in", type="integer")
+     *     )
+     *   )
      * )
      */
     public function login(LoginRequest $request): JsonResponse
@@ -38,8 +53,26 @@ final readonly class AuthController
      * @OA\Post(
      *   path="/api/auth/register",
      *   tags={"Auth"},
-     *
-     *   @OA\Response(response=200, description="OK")
+     *   @OA\RequestBody(
+     *     required=true,
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="name", type="string"),
+     *       @OA\Property(property="email", type="string"),
+     *       @OA\Property(property="password", type="string"),
+     *       @OA\Property(property="password_confirmation", type="string")
+     *     )
+     *   ),
+     *   @OA\Response(response=200, description="OK",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="user", type="object",
+     *         @OA\Property(property="id", type="string"),
+     *         @OA\Property(property="name", type="string"),
+     *         @OA\Property(property="email", type="string")
+     *       )
+     *     )
+     *   )
      * )
      */
     public function register(RegisterRequest $request): JsonResponse

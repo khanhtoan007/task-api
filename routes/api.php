@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContestController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +32,16 @@ Route::prefix('auth')->group(function (): void {
 
 Route::middleware('auth:api')->group(function (): void {
     Route::apiResource('projects', ProjectController::class);
-    Route::post('projects/{id}/assign-user', [ProjectController::class, 'assignUser']);
+    Route::post('projects/{project}/assign-user', [ProjectController::class, 'assignUser']);
     Route::apiResource('tasks', TaskController::class);
+    Route::get('projects/{project}/tasks', [TaskController::class, 'getTasksByProject']);
+
+    //User Contest
+    Route::get('users/contests', [UserController::class, 'getAllContestUser']);
+    Route::delete('users/{user}', [UserController::class, 'delete']);
+    Route::put('users/{user}', [UserController::class, 'update']);
+    Route::post('users/contests', [UserController::class, 'createUserContest']);
+
+    // Contest
+    Route::apiResource('contests', ContestController::class);
 });

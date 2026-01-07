@@ -2,104 +2,32 @@
 
 namespace App\Http\Requests;
 
+use App\Traits\HasIndexRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-abstract class BaseIndexRequest extends FormRequest
+/**
+ * Base IndexRequest chung cho tất cả list endpoints
+ * Sử dụng trực tiếp, không cần tạo class con cho mỗi domain
+ */
+final class BaseIndexRequest extends FormRequest
 {
+    use HasIndexRequest;
+
     /**
      * Determine if the user is authorized to make this request.
      */
-    final public function authorize(): bool
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
-     * Base validation rules for pagination, sorting, search
-     * Override in child classes to add custom filters
+     * Validation rules: chỉ base rules, custom rules sẽ được handle trong trait
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    final public function rules(): array
+    public function rules(): array
     {
-        return array_merge([
-            'page' => 'sometimes|integer|min:1',
-            'per_page' => 'sometimes|integer|min:1|max:100',
-            'search' => 'sometimes|string|max:255',
-            'sort_by' => 'sometimes|string|in:'.implode(',', $this->getAllowedSortFields()),
-            'sort_order' => 'sometimes|string|in:asc,desc',
-        ], $this->getCustomRules());
-    }
-
-    /**
-     * Get pagination parameters
-     */
-    final public function getPagination(): array
-    {
-        return [
-            'page' => (int) $this->input('page', 1),
-            'per_page' => (int) $this->input('per_page', 15),
-        ];
-    }
-
-    /**
-     * Get filter parameters (override in child classes to add custom filters)
-     */
-    final public function getFilters(): array
-    {
-        $filters = [];
-
-        if ($this->has('search') && $this->filled('search')) {
-            $filters['search'] = $this->input('search');
-        }
-
-        return array_merge($filters, $this->getCustomFilters());
-    }
-
-    /**
-     * Get sort parameters
-     */
-    final public function getSorting(): array
-    {
-        return [
-            'sort_by' => $this->input('sort_by', $this->getDefaultSortField()),
-            'sort_order' => $this->input('sort_order', 'desc'),
-        ];
-    }
-
-    /**
-     * Get allowed sort fields (override in child classes)
-     *
-     * @return array<string>
-     */
-    protected function getAllowedSortFields(): array
-    {
-        return ['created_at', 'updated_at'];
-    }
-
-    /**
-     * Get custom validation rules (override in child classes)
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    protected function getCustomRules(): array
-    {
-        return [];
-    }
-
-    /**
-     * Get custom filters (override in child classes)
-     */
-    protected function getCustomFilters(): array
-    {
-        return [];
-    }
-
-    /**
-     * Get default sort field (override in child classes)
-     */
-    protected function getDefaultSortField(): string
-    {
-        return 'created_at';
+        return $this->getBaseRules();
     }
 }
